@@ -1,3 +1,18 @@
+@media print {
+  @page {
+    size: portrait;
+  }
+  body {
+    margin-left: -13mm;
+    margin-top: 13%;    
+  }
+}
+
+.SideBySide {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
 .Container {
   display: flex;
   justify-content: flex-start;
@@ -49,7 +64,7 @@
 }
 
 .Grid {
-  border: solid 5px black;
+  border: solid 1px black;
   max-height: 900px;
   max-width: 900px;
   display: grid;

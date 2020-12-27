@@ -1,5 +1,7 @@
 import './App.css';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import html2canvas from 'html2canvas';
+import ReactToPrint, {useReactToPrint} from 'react-to-print';
 
 let mouseDown = false;
 document.onmousedown = function() { 
@@ -33,9 +35,7 @@ const Square = ({number, paintbrush}) => {
     }
   }
 
-  useEffect(()=>{
-    console.log("Current Paintbrush: ", paintbrush)
-  },[paintbrush])
+  
 
   function handleRoll () {
     if (mouseDown) {
@@ -83,16 +83,32 @@ const Palette = ({colors, setBrush}) => {
 
 function App() {
   const [brush, setBrush] = useState("white")
-
+  const [picture, setPicture] = useState(null);
   function handleBrush (color) {
     setBrush(color);
   }
+
+  const gridRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => gridRef.current,
+  });
+
+  function wrapper() {
+    setPicture(document.getElementById("Grid"));
+    handlePrint();
+  }
+
+ 
+
+  useEffect(()=> {
+    console.log(picture);
+  },[picture])
 
   return (
     <div className="App">
       <div className="Container" draggable="False">
         <div id="SubContainer" onContextMenu={event => event.preventDefault()}>
-          <div id="Grid" className="Grid">
+          <div media="print" ref={gridRef} id="Grid" className="Grid">
             <Grid paintbrush={brush}></Grid>
           </div>
         </div>
@@ -102,9 +118,12 @@ function App() {
         </div>
       </div>
       <br></br>
-      <div id="Save" className="Save">
-        Save Drawing!
+      <div id="SideBySide" className="SideBySide">
+        <div id="Save" className="Save" onClick={wrapper}>
+          Print Drawing!
+        </div>
       </div>
+      
     </div>
   );
 }
