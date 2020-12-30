@@ -8,23 +8,50 @@
   }
 }
 
-.SideBySide {
+.UnderGrid {
   display: flex;
   flex-flow: row nowrap;
 }
 
+.SideBySide {
+  display: flex;
+  flex-flow: row nowrap;
+  width: 1214px;
+  margin-left: 50px;
+  justify-content: space-between;
+}
+
+.Save {
+  border: solid 3px black;
+  width: 150px;
+  height: 30px;
+  border-radius: 8px;
+  font-family: Pacifico;
+  text-align: center;
+  margin-right: 5px;
+  background-color: beige;
+}
+
+.Save:hover {
+  cursor: pointer;
+  opacity: 0.6;
+}
+
 .Container {
+  margin-top: 20px;
   display: flex;
   justify-content: flex-start;
   flex-flow: row wrap;
 }
 
 .Palette {
+  position: absolute;
+  float: right;
   height: 900px;
   width: 250px;
   border: solid 3px black;
   border-radius: 8px;
-  margin-left: 50px;
+  margin-left: 1000px;
   padding: 0;
   display: flex;
   flex-flow: row wrap;
@@ -33,21 +60,9 @@
   overflow-y: scroll;
 }
 
-.Save {
-  border: solid 3px black;
-  width: 150px;
-  height: 30px;
-  margin-left: 50px;
-  border-radius: 8px;
-  font-family: Pacifico;
-  text-align: center;
-  background-color: beige;
-}
 
-.Save:hover {
-  cursor: pointer;
-  opacity: 0.6;
-}
+
+
 
 .Color {
   border: solid 5px black;
