@@ -1,6 +1,9 @@
 import './App.css';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import {useReactToPrint} from 'react-to-print';
+import { SketchPicker } from 'react-color';
+import { render } from 'react-dom';
+
 
 let mouseDown = false;
 document.onmousedown = function() { 
@@ -70,20 +73,89 @@ const Color = ({color, setBrush}) => {
 }
 const Palette = ({colors, setBrush}) => {
   return colors.map(color => {
-    return <Color key={color} color={color} setBrush={setBrush}></Color>
+    return <div><Color color={color} setBrush={setBrush}></Color></div>
   })
 }
-
 const ClearButton = ({clear, setClear}) => {
   function handleClear() {
     setClear(clear + 1);
   }
   return (
-    <div id="ClearButton" className="Save" onClick={handleClear}>Clear</div>
+    <div id="ClearButton" className="ButtonType" onClick={handleClear}>Clear Canvas</div>
+  )
+}
+
+const ColorModal = ({togglePick, setTogglePick, setBrush}) => {
+  const [visible, setVisible] = useState('hidden')
+  const [custom, setCustom] = useState('#194D33');
+  const paletteRef = document.getElementById('Palette')
+  function handleChange (color) {
+    setCustom(color.hex)
+  };
+
+  function closeColor () {
+    setTogglePick(false);
+    setVisible('hidden');
+    const placeHolder = document.createElement('div');
+    paletteRef.appendChild(placeHolder);
+    render(<div><Color color={custom} setBrush={setBrush}></Color></div>, placeHolder);
+  }
+
+
+  useEffect(()=>{
+    if (togglePick) {
+      setVisible('visible')
+    }
+  },[togglePick])
+
+  return (
+    <div  id="ColorModal" 
+          className="ColorModal"
+          style={{visibility: visible}}
+    >
+      {togglePick ? 
+      <div className="WhiteModal" id="WhiteModal">
+        <div className="ModalContainer" id="ModalContainer">
+          <div className="PickInstructions" id="PickInstructions">
+            drag the cursor or input values to select a color. 
+            When you're finished, select OK.
+          </div>
+          <br></br>
+          <div  className="SubmitColor" 
+                id="SubmitColor"
+                style={{boxShadow: "10px 10px 8px #888888",
+                        borderColor: custom
+                      }}
+                onClick={closeColor}
+                
+          >OK</div>
+        </div>
+        <SketchPicker color={custom} onChange={handleChange}>
+        </SketchPicker>
+      </div> 
+      : null}
+    </div>
+  )
+}
+
+const ColorPicker = ({togglePick, setTogglePick}) => {
+  //lmao risky but we'll see
+  function openColor () {
+    if (togglePick === false) {
+      setTogglePick(true);
+    } else {
+      setTogglePick(false);
+    }
+  }
+  return (
+    <div id="PickColor" className="ButtonType" onClick={openColor}>
+      Add Custom Color
+    </div>
   )
 }
 
 function App() {
+  const [togglePick, setTogglePick] = useState(false);
   const [brush, setBrush] = useState("white")
   const [picture, setPicture] = useState(null);
   const [clear, setClear] = useState(0);
@@ -98,13 +170,7 @@ function App() {
     setPicture(document.getElementById("Grid"));
     handlePrint();
   }
-  useEffect(()=> {
-    console.log(picture);
-  },[picture])
 
-  useEffect(()=> {
-    console.log(clear);
-  },[clear])
   return (
     <div className="App">
       <div className="Container" draggable="False">
@@ -115,25 +181,25 @@ function App() {
         </div>
         <div id="Palette" className="Palette">
           <Palette colors={colors} setBrush={handleBrush}></Palette>
-          <Color color="mintcream" setBrush={handleBrush}></Color>
+          <div><Color color="mintcream" setBrush={handleBrush}></Color></div>
         </div>
       </div>
       <br></br>
       <div id="SideBySide" className="SideBySide">
         <div id="UnderGrid" className="UnderGrid">
-          <div id="Save" className="Save" onClick={wrapper}>
+          <div id="Print" className="ButtonType" onClick={wrapper}>
             Print Drawing!
           </div>
           <ClearButton clear={clear} setClear={setClear}></ClearButton>
         </div>
-        <div id="Save" className="Save" onClick={wrapper}>
-            COLOR PICKER
-        </div>
-        
+        <ColorPicker setTogglePick={setTogglePick} togglePick={togglePick}></ColorPicker>
+        <ColorModal 
+        setBrush={handleBrush}
+        setTogglePick={setTogglePick} 
+        togglePick={togglePick}></ColorModal>
       </div>
       
     </div>
   );
 }
-
 export default App;
